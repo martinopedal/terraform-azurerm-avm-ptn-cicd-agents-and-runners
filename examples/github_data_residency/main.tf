@@ -48,7 +48,7 @@ module "github_runners" {
   resource_group_creation_enabled = false
   resource_group_name             = var.resource_group_name
 
-  # BYO VNet — module will not create networking resources
+  # BYO VNet - module will not create networking resources
   virtual_network_creation_enabled              = false
   virtual_network_id                            = var.virtual_network_id
   container_app_subnet_id                       = var.container_app_subnet_id

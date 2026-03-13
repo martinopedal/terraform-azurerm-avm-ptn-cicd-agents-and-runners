@@ -1,10 +1,10 @@
-# GitHub Enterprise Cloud with Data Residency — BYO VNet and DNS
+# GitHub Enterprise Cloud with Data Residency - BYO VNet and DNS
 
 This example deploys GitHub self-hosted runners configured for GitHub
 Enterprise Cloud (GHEC) with data residency (`<subdomain>.ghe.com`),
 using a **Bring Your Own** (BYO) VNet, DNS zone, and resource group.
 
-Only the runner infrastructure is created by this module — you supply
+Only the runner infrastructure is created by this module - you supply
 the networking and DNS resources that already exist in your environment.
 
 ## Prerequisites
