@@ -1,12 +1,12 @@
 module "virtual_network" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version = "0.8.1"
+  version = "0.17.1"
   count   = var.use_private_networking && var.virtual_network_creation_enabled ? 1 : 0
 
-  address_space       = [var.virtual_network_address_space]
-  location            = var.location
-  resource_group_name = local.resource_group_name
-  name                = local.virtual_network_name
+  address_space = [var.virtual_network_address_space]
+  location      = var.location
+  name          = local.virtual_network_name
+  parent_id     = local.resource_group_id
   subnets = merge(local.final_subnets, {
     container_registry_private_endpoint = {
       name           = local.container_registry_private_endpoint_subnet_name
