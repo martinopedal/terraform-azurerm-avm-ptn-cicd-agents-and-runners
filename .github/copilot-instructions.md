@@ -161,3 +161,13 @@ Changes to `modules/container-app-job/`, `modules/container-instance/`, or `modu
 - Do not manually edit content between those markers
 - Only ✅ and ❌ emojis - no others
 - Keep language direct and technical
+
+## Security rules
+- No secrets in code - use environment variables or GitHub Secrets
+- SHA-pin all GitHub Actions to commit SHAs
+- Use actions/checkout@v6 and actions/setup-python@v6 (Node.js 24 compatible)
+- No enforce_admins on branch protection
+- CodeQL enabled for code scanning
+
+## GitHub-first principle
+Validate changes in GitHub Actions, not locally. Push, trigger workflow, check logs, iterate.
