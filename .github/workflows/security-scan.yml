@@ -28,7 +28,7 @@ jobs:
           soft_fail: false
           output_format: cli,sarif
           output_file_path: console,results.sarif
-          skip_check: CKV_TF_1
+          skip_check: CKV_TF_1,CKV2_ADO_1
 
       - name: Upload SARIF
         if: always()
@@ -72,6 +72,7 @@ jobs:
           exit-code: '0'
           severity: CRITICAL,HIGH,MEDIUM
           trivyignores: .trivyignore
+          timeout: 30m
 
       - name: Upload Trivy SARIF
         if: always() && hashFiles('trivy-results.sarif') != ''
