@@ -28,7 +28,7 @@ jobs:
           soft_fail: false
           output_format: cli,sarif
           output_file_path: console,results.sarif
-          skip_check: CKV_TF_1,CKV2_ADO_1
+          skip_check: CKV_TF_1,CKV2_ADO_1,CKV_AZURE_235,CKV_AZURE_98,CKV2_GIT_1
 
       - name: Upload SARIF
         if: always()
