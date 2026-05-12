@@ -14,3 +14,8 @@ resource "azurerm_management_lock" "this" {
   scope      = azurerm_resource_group.this[0].id
   notes      = var.lock.kind == "CanNotDelete" ? "Cannot delete the resource or its child resources." : "Cannot delete or modify the resource or its child resources."
 }
+
+# AVM Telemetry - https://aka.ms/avm/telemetryinfo
+resource "null_resource" "telemetry" {
+  count = var.enable_telemetry ? 1 : 0
+}
