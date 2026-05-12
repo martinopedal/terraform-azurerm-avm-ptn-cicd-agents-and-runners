@@ -1,3 +1,7 @@
+# SECURITY: Never commit real GitHub tokens. Use environment variables (TF_VAR_*),
+# GitHub Actions secrets, or secure parameter stores. All token variables are marked
+# sensitive and should be supplied at runtime only.
+
 locals {
   tags = {
     scenario = "default"
