@@ -130,3 +130,36 @@ variable "version_control_system_runner_scope" {
   default     = "repo"
   description = "The scope of the runner. Must be `ent`, `org`, or `repo`. This is ignored for Azure DevOps."
 }
+
+variable "version_control_system_keda_labels" {
+  type        = string
+  default     = ""
+  description = <<-EOT
+  Optional KEDA `labels` metadata for the github-runner scaler. When set, KEDA
+  only counts queued/in-progress jobs whose `runs-on` labels can be satisfied
+  by this comma-separated label list (subject to `version_control_system_keda_no_default_labels`).
+  Leave empty to keep upstream behaviour (KEDA only matches reserved labels
+  `self-hosted,linux,x64` → blind to any custom label like `alz-p1`).
+  Ignored for Azure DevOps.
+EOT
+}
+
+variable "version_control_system_keda_no_default_labels" {
+  type        = bool
+  default     = false
+  description = <<-EOT
+  When true, KEDA's `noDefaultLabels` is set so the scaler does NOT auto-append
+  `self-hosted,linux,x64` to `labels`. Use this with an explicit `labels` that
+  already includes the reserved labels you want to honour. Ignored for Azure DevOps.
+EOT
+}
+
+variable "version_control_system_keda_enable_etags" {
+  type        = bool
+  default     = false
+  description = <<-EOT
+  When true, KEDA's github-runner `enableEtags` is set so the scaler uses
+  HTTP ETag conditional requests, reducing API consumption when nothing has
+  changed since the previous poll. Available on KEDA >= 2.17. Ignored for Azure DevOps.
+EOT
+}
