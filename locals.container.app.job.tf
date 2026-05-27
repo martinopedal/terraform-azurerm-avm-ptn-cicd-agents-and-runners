@@ -5,19 +5,29 @@ locals {
     targetPipelinesQueueLength = var.version_control_system_agent_target_queue_length
   }
   keda_meta_data_final = var.version_control_system_type == local.version_control_system_azure_devops ? jsonencode(local.keda_meta_data_azure_devops) : jsonencode(local.keda_meta_data_github)
-  keda_meta_data_github = local.version_control_system_authentication_method == "pat" ? {
-    owner                     = var.version_control_system_organization
-    repos                     = var.version_control_system_repository
-    targetWorkflowQueueLength = var.version_control_system_agent_target_queue_length
-    runnerScope               = var.version_control_system_runner_scope
-    } : {
-    owner                     = var.version_control_system_organization
-    repos                     = var.version_control_system_repository
-    targetWorkflowQueueLength = var.version_control_system_agent_target_queue_length
-    runnerScope               = var.version_control_system_runner_scope
-    applicationID             = var.version_control_system_github_application_id
-    installationID            = var.version_control_system_github_application_installation_id
-  }
+  # mp/personal fork: extra KEDA github-runner metadata is included only when set
+  # so upstream behaviour is unchanged for consumers that don't opt in.
+  keda_meta_data_github_extras = merge(
+    var.version_control_system_keda_labels != "" ? { labels = var.version_control_system_keda_labels } : {},
+    var.version_control_system_keda_no_default_labels ? { noDefaultLabels = "true" } : {},
+    var.version_control_system_keda_enable_etags ? { enableEtags = "true" } : {},
+  )
+  keda_meta_data_github = merge(
+    local.version_control_system_authentication_method == "pat" ? {
+      owner                     = var.version_control_system_organization
+      repos                     = var.version_control_system_repository
+      targetWorkflowQueueLength = var.version_control_system_agent_target_queue_length
+      runnerScope               = var.version_control_system_runner_scope
+      } : {
+      owner                     = var.version_control_system_organization
+      repos                     = var.version_control_system_repository
+      targetWorkflowQueueLength = var.version_control_system_agent_target_queue_length
+      runnerScope               = var.version_control_system_runner_scope
+      applicationID             = var.version_control_system_github_application_id
+      installationID            = var.version_control_system_github_application_installation_id
+    },
+    local.keda_meta_data_github_extras
+  )
 }
 
 locals {
