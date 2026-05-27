@@ -143,6 +143,20 @@ module "github_runners" {
 }
 ```
 
+### Bring your own Log Analytics Workspace for Container Apps
+
+When `log_analytics_workspace_creation_enabled = false` and this module creates the Container App Environment, provide an existing workspace using `log_analytics_workspace_resource_id` so the environment can configure Log Analytics at creation time:
+
+```hcl
+module "github_runners" {
+  source = "Azure/avm-ptn-cicd-agents-and-runners/azurerm"
+
+  # ...other required inputs...
+  log_analytics_workspace_creation_enabled = false
+  log_analytics_workspace_resource_id      = azurerm_log_analytics_workspace.shared.id
+}
+```
+
 ## Required permissions
 
 The examples in this repository follow a least-privilege model. The principal that runs Terraform (the *deployer*) and the User Assigned Managed Identity (UAMI) that the agents/runners use at runtime have very different permission requirements - keep them separate.
@@ -813,8 +827,8 @@ Default: `{}`
 
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 
-Description: This variable controls whether or not telemetry is enabled for the module.  
-For more information see <https://aka.ms/avm/telemetryinfo>.  
+Description: This variable controls whether or not telemetry is enabled for the module.
+For more information see <https://aka.ms/avm/telemetryinfo>.
 If it is set to false, then no telemetry will be collected.
 
 Type: `bool`
@@ -849,7 +863,7 @@ Default: `true`
 
 ### <a name="input_log_analytics_workspace_id"></a> [log\_analytics\_workspace\_id](#input\_log\_analytics\_workspace\_id)
 
-Description: The resource Id of the Log Analytics Workspace.
+Description: Deprecated legacy alias for log\_analytics\_workspace\_resource\_id. The resource ID of the Log Analytics Workspace.
 
 Type: `string`
 
@@ -874,6 +888,14 @@ Default: `null`
 ### <a name="input_log_analytics_workspace_name"></a> [log\_analytics\_workspace\_name](#input\_log\_analytics\_workspace\_name)
 
 Description: The name of the log analytics workspace. Only required if `log_analytics_workspace_creation_enabled == false`.
+
+Type: `string`
+
+Default: `null`
+
+### <a name="input_log_analytics_workspace_resource_id"></a> [log\_analytics\_workspace\_resource\_id](#input\_log\_analytics\_workspace\_resource\_id)
+
+Description: The resource ID of an existing Log Analytics Workspace to attach to the Container App Environment when log\_analytics\_workspace\_creation\_enabled is false.
 
 Type: `string`
 
@@ -1136,6 +1158,39 @@ Description: The application key for the GitHub App authentication method.
 Type: `string`
 
 Default: `null`
+
+### <a name="input_version_control_system_keda_enable_etags"></a> [version\_control\_system\_keda\_enable\_etags](#input\_version\_control\_system\_keda\_enable\_etags)
+
+Description: When true, KEDA's github-runner `enableEtags` is set so the scaler uses
+HTTP ETag conditional requests, reducing API consumption when nothing has
+changed since the previous poll. Available on KEDA >= 2.17. Ignored for Azure DevOps.
+
+Type: `bool`
+
+Default: `false`
+
+### <a name="input_version_control_system_keda_labels"></a> [version\_control\_system\_keda\_labels](#input\_version\_control\_system\_keda\_labels)
+
+Description: Optional KEDA `labels` metadata for the github-runner scaler. When set, KEDA
+only counts queued/in-progress jobs whose `runs-on` labels can be satisfied
+by this comma-separated label list (subject to `version_control_system_keda_no_default_labels`).
+Leave empty to keep upstream behaviour (KEDA only matches reserved labels
+`self-hosted,linux,x64` → blind to any custom label like `alz-p1`).
+Ignored for Azure DevOps.
+
+Type: `string`
+
+Default: `""`
+
+### <a name="input_version_control_system_keda_no_default_labels"></a> [version\_control\_system\_keda\_no\_default\_labels](#input\_version\_control\_system\_keda\_no\_default\_labels)
+
+Description: When true, KEDA's `noDefaultLabels` is set so the scaler does NOT auto-append
+`self-hosted,linux,x64` to `labels`. Use this with an explicit `labels` that
+already includes the reserved labels you want to honour. Ignored for Azure DevOps.
+
+Type: `bool`
+
+Default: `false`
 
 ### <a name="input_version_control_system_personal_access_token"></a> [version\_control\_system\_personal\_access\_token](#input\_version\_control\_system\_personal\_access\_token)
 
