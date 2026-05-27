@@ -1,5 +1,5 @@
 data "azapi_resource" "log_analytics_workspace" {
-  count = local.deploy_container_app && var.container_app_environment_creation_enabled && (var.log_analytics_workspace_creation_enabled || var.log_analytics_workspace_id != null) ? 1 : 0
+  count = local.deploy_container_app && var.container_app_environment_creation_enabled && (var.log_analytics_workspace_creation_enabled || local.log_analytics_workspace_existing_resource_id != null) ? 1 : 0
 
   resource_id            = local.log_analytics_workspace_id
   type                   = "Microsoft.OperationalInsights/workspaces@2023-09-01"
@@ -7,7 +7,7 @@ data "azapi_resource" "log_analytics_workspace" {
 }
 
 data "azapi_resource_action" "log_analytics_workspace_keys" {
-  count = local.deploy_container_app && var.container_app_environment_creation_enabled && (var.log_analytics_workspace_creation_enabled || var.log_analytics_workspace_id != null) ? 1 : 0
+  count = local.deploy_container_app && var.container_app_environment_creation_enabled && (var.log_analytics_workspace_creation_enabled || local.log_analytics_workspace_existing_resource_id != null) ? 1 : 0
 
   action                 = "sharedKeys"
   method                 = "POST"

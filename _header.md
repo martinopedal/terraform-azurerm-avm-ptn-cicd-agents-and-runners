@@ -141,6 +141,20 @@ module "github_runners" {
 }
 ```
 
+### Bring your own Log Analytics Workspace for Container Apps
+
+When `log_analytics_workspace_creation_enabled = false` and this module creates the Container App Environment, provide an existing workspace using `log_analytics_workspace_resource_id` so the environment can configure Log Analytics at creation time:
+
+```hcl
+module "github_runners" {
+  source = "Azure/avm-ptn-cicd-agents-and-runners/azurerm"
+
+  # ...other required inputs...
+  log_analytics_workspace_creation_enabled = false
+  log_analytics_workspace_resource_id      = azurerm_log_analytics_workspace.shared.id
+}
+```
+
 ## Required permissions
 
 The examples in this repository follow a least-privilege model. The principal that runs Terraform (the *deployer*) and the User Assigned Managed Identity (UAMI) that the agents/runners use at runtime have very different permission requirements - keep them separate.
