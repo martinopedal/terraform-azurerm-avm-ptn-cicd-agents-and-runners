@@ -12,6 +12,22 @@ This module deploys self-hosted Azure DevOps Agents and Github Runners with supp
 - Creates all required Azure resources or use existing ones
 - No PAT token management required with UAMI authentication
 
+## Fork Divergence
+
+This `martinopedal` fork carries KEDA GitHub runner metadata inputs that are not
+present in the upstream AVM module release this fork is based on:
+
+- `version_control_system_keda_labels`
+- `version_control_system_keda_no_default_labels`
+- `version_control_system_keda_enable_etags`
+
+The inputs map to the KEDA `github-runner` scaler metadata keys `labels`,
+`noDefaultLabels`, and `enableEtags`. They are optional and default to upstream
+behavior, but they let private ALZ runner pools scale only for jobs whose
+`runs-on` labels match the pool boundary. This avoids cross-pool queue theft and
+keeps label-isolated pools such as personal, demo-private, and org runners from
+scaling on each other's jobs.
+
 ## Authentication Methods
 
 **Azure DevOps**: PAT (token-based) or UAMI (identity-based, no tokens required)

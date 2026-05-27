@@ -14,6 +14,22 @@ This module deploys self-hosted Azure DevOps Agents and Github Runners with supp
 - Creates all required Azure resources or use existing ones
 - No PAT token management required with UAMI authentication
 
+## Fork Divergence
+
+This `martinopedal` fork carries KEDA GitHub runner metadata inputs that are not
+present in the upstream AVM module release this fork is based on:
+
+- `version_control_system_keda_labels`
+- `version_control_system_keda_no_default_labels`
+- `version_control_system_keda_enable_etags`
+
+The inputs map to the KEDA `github-runner` scaler metadata keys `labels`,
+`noDefaultLabels`, and `enableEtags`. They are optional and default to upstream
+behavior, but they let private ALZ runner pools scale only for jobs whose
+`runs-on` labels match the pool boundary. This avoids cross-pool queue theft and
+keeps label-isolated pools such as personal, demo-private, and org runners from
+scaling on each other's jobs.
+
 ## Authentication Methods
 
 **Azure DevOps**: PAT (token-based) or UAMI (identity-based, no tokens required)
@@ -1019,6 +1035,39 @@ Description: The application key for the GitHub App authentication method.
 Type: `string`
 
 Default: `null`
+
+### <a name="input_version_control_system_keda_enable_etags"></a> [version\_control\_system\_keda\_enable\_etags](#input\_version\_control\_system\_keda\_enable\_etags)
+
+Description: When true, KEDA's github-runner `enableEtags` is set so the scaler uses
+HTTP ETag conditional requests, reducing API consumption when nothing has
+changed since the previous poll. Available on KEDA >= 2.17. Ignored for Azure DevOps.
+
+Type: `bool`
+
+Default: `false`
+
+### <a name="input_version_control_system_keda_labels"></a> [version\_control\_system\_keda\_labels](#input\_version\_control\_system\_keda\_labels)
+
+Description: Optional KEDA `labels` metadata for the github-runner scaler. When set, KEDA
+only counts queued/in-progress jobs whose `runs-on` labels can be satisfied
+by this comma-separated label list (subject to `version_control_system_keda_no_default_labels`).
+Leave empty to keep upstream behaviour (KEDA only matches reserved labels
+`self-hosted,linux,x64` → blind to any custom label like `alz-p1`).
+Ignored for Azure DevOps.
+
+Type: `string`
+
+Default: `""`
+
+### <a name="input_version_control_system_keda_no_default_labels"></a> [version\_control\_system\_keda\_no\_default\_labels](#input\_version\_control\_system\_keda\_no\_default\_labels)
+
+Description: When true, KEDA's `noDefaultLabels` is set so the scaler does NOT auto-append
+`self-hosted,linux,x64` to `labels`. Use this with an explicit `labels` that
+already includes the reserved labels you want to honour. Ignored for Azure DevOps.
+
+Type: `bool`
+
+Default: `false`
 
 ### <a name="input_version_control_system_personal_access_token"></a> [version\_control\_system\_personal\_access\_token](#input\_version\_control\_system\_personal\_access\_token)
 
