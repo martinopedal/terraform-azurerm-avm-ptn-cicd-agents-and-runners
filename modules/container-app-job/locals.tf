@@ -18,11 +18,19 @@ locals {
   secret_environment_variables = [for env in var.sensitive_environment_variables : {
     name      = env.name
     secretRef = env.container_app_secret_name
-  } if env.value != null && env.value != null]
-  secrets = concat([for env in var.sensitive_environment_variables : {
-    name  = env.container_app_secret_name
-    value = env.value
-    } if env.value != null && env.value != null],
+  } if env.value != null || env.key_vault_url != null]
+  secrets = concat([for env in var.sensitive_environment_variables : merge(
+    {
+      name = env.container_app_secret_name
+    },
+    env.value != null ? {
+      value = env.value
+    } : {},
+    env.key_vault_url != null ? {
+      keyVaultUrl = env.key_vault_url
+      identity    = env.identity
+    } : {}
+    ) if env.value != null || env.key_vault_url != null],
     var.registry_password == null ? [] : [{
       name  = "registry-password"
       value = var.registry_password
@@ -66,7 +74,7 @@ locals {
   keda_auth = [for env in var.sensitive_environment_variables : {
     secretRef        = env.container_app_secret_name
     triggerParameter = env.keda_auth_name
-  } if env.keda_auth_name != null]
+  } if env.keda_auth_name != null && (env.value != null || env.key_vault_url != null)]
   keda_rule = merge({
     name     = var.keda_rule_type
     type     = var.keda_rule_type

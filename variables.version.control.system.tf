@@ -116,15 +116,28 @@ variable "version_control_system_github_application_installation_id" {
 variable "version_control_system_github_application_key" {
   type        = string
   default     = null
-  description = "The application key for the GitHub App authentication method."
+  description = "The application key for the GitHub App authentication method. Use version_control_system_github_application_key_secret for externally managed secrets."
   sensitive   = true
 
   validation {
     condition = (
-      coalesce(var.version_control_system_authentication_method, var.version_control_system_type == "azuredevops" ? "uami" : "github_app") == "github_app" ? var.version_control_system_github_application_key != "" && var.version_control_system_github_application_key != null : true
+      coalesce(var.version_control_system_authentication_method, var.version_control_system_type == "azuredevops" ? "uami" : "github_app") == "github_app" ? (
+        (var.version_control_system_github_application_key != "" && var.version_control_system_github_application_key != null) ||
+        var.version_control_system_github_application_key_secret != null
+      ) : true
     )
-    error_message = "Variable version_control_system_github_application_key must be defined when version_control_system_authentication_method is github_app."
+    error_message = "Either version_control_system_github_application_key or version_control_system_github_application_key_secret must be defined when version_control_system_authentication_method is github_app."
   }
+}
+
+variable "version_control_system_github_application_key_secret" {
+  type = object({
+    key_vault_url = string
+    identity      = string
+  })
+  default     = null
+  description = "Externally managed ACA Job secret reference for the GitHub App private key. Set key_vault_url to the Key Vault secret URI and identity to the managed identity resource ID used by Container Apps to read it."
+  sensitive   = true
 }
 
 variable "version_control_system_github_url" {

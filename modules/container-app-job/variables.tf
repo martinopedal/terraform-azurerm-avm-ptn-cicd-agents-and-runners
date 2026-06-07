@@ -50,7 +50,9 @@ variable "resource_group_id" {
 variable "sensitive_environment_variables" {
   type = set(object({
     name                      = string
-    value                     = string
+    value                     = optional(string)
+    key_vault_url             = optional(string)
+    identity                  = optional(string)
     container_app_secret_name = string
     keda_auth_name            = optional(string)
   }))

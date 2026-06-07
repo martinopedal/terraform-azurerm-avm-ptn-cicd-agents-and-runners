@@ -182,6 +182,8 @@ locals {
     {
       name                      = "APP_PRIVATE_KEY"
       value                     = var.version_control_system_github_application_key
+      key_vault_url             = try(var.version_control_system_github_application_key_secret.key_vault_url, null)
+      identity                  = try(var.version_control_system_github_application_key_secret.identity, null)
       container_app_secret_name = "application-key"
       keda_auth_name            = var.webhook_scaling_enabled ? null : "appKey"
     }
